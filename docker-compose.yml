@@ -1,0 +1,85 @@
+services:
+  postgres:
+    container_name: ms_pg_sql
+    image: postgres:17
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ms_ecomm:/var/lib/postgresql/data
+    networks:
+      - internal
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - internal
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  mongodb:
+    container_name: mongo_db
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: devdad
+      MONGO_INITDB_ROOT_PASSWORD: devdad
+    networks:
+      internal:
+        aliases:
+          - mongo
+
+  mongo-express:
+    container_name: mongo_express
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: devdad
+      ME_CONFIG_MONGODB_ADMINPASSWORD: devdad
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - internal
+    restart: unless-stopped
+
+  mail-dev:
+    container_name: ms_mail_dev
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+    name: internal
+
+volumes:
+  ms_ecomm:
+    driver: local
+  # Allows us to persist pgadmin data so need to re-add servers every single time
+  pgadmin-data:
+    driver: local
+  mongo:
+    driver: local
