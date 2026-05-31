@@ -4,6 +4,9 @@ spring:
       username: devdad
       password: devdad
       host: localhost
-      port: 27017
+      port: 27018
       database: customer
       authentication-database: admin
+
+server:
+  port: 8090
