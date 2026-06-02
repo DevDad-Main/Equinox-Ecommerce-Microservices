@@ -13,14 +13,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.ListResourceBundle;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * ProductController
@@ -37,7 +35,7 @@ public class ProductController {
 		return ResponseEntity.ok(service.createProduct(request));
 	}
 
-	@PostMapping
+	@PostMapping("/purchase")
 	public ResponseEntity<List<ProductPurchaseResponseDTO>> purchasableProducts(
 			@RequestBody List<ProductPurchaseRequestDTO> request) {
 
