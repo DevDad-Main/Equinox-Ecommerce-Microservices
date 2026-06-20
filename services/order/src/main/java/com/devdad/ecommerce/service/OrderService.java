@@ -8,6 +8,8 @@ import com.devdad.ecommerce.dto.PurchaseRequestDTO;
 import com.devdad.ecommerce.exception.BusinessException;
 import com.devdad.ecommerce.feignclient.CustomerClient;
 import com.devdad.ecommerce.feignclient.ProductClient;
+import com.devdad.ecommerce.kafka.OrderConfirmationDTO;
+import com.devdad.ecommerce.kafka.OrderProducer;
 import com.devdad.ecommerce.mapper.OrderMapper;
 import com.devdad.ecommerce.repository.OrderRepository;
 
@@ -25,6 +27,7 @@ public class OrderService {
 	private final ProductClient productClient;
 
 	private final OrderLineService orderLineService;
+	private final OrderProducer orderProducer;
 
 	public Integer createOrder(OrderRequestDTO request) {
 		// Check the customer.
@@ -33,7 +36,8 @@ public class OrderService {
 						"Cannot create order:: No Customer exists with the provided ID." + request.customerId()));
 
 		// Purchase the products. -> product Microservice
-		this.productClient.purchaseProducts(request.products());
+
+		var purchasedProducts = this.productClient.purchaseProducts(request.products());
 
 		// Persist order
 		var order = this.orderRepository.save(OrderMapper.toEntity(request));
@@ -42,17 +46,22 @@ public class OrderService {
 		for (PurchaseRequestDTO purchaseRequest : request.products()) {
 			orderLineService.saveOrderLine(
 					new OrderLineRequestDTO(
-						null,
-						order.getId(),
-						purchaseRequest.productId(),
-						purchaseRequest.quantity()
-						)
-					);
+							null,
+							order.getId(),
+							purchaseRequest.productId(),
+							purchaseRequest.quantity()));
 		}
 
-		//TODO: Initiate payment process
+		// TODO: Initiate payment process
 
-		// Send order confirmation -> notification microservice (kafka)
-		return 1;
+		orderProducer.sendOrderConfirmation(
+				new OrderConfirmationDTO(
+						request.orderReference(),
+						request.amount(),
+						request.paymentMethod(),
+						customer,
+						purchasedProducts));
+
+		return order.getId();
 	}
 }
