@@ -43,7 +43,7 @@ public class Order {
 	private BigDecimal totalAmount;
 
 	@Enumerated(EnumType.STRING)
-	private PaymentMethod PaymentMethod;
+	private PaymentMethod paymentMethod;
 	private String customerId;
 
 	@OneToMany(mappedBy = "order")

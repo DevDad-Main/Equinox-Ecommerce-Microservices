@@ -3,6 +3,7 @@ package com.devdad.ecommerce.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,13 +51,13 @@ public class CustomerController {
 		return ResponseEntity.ok(customerService.existsById(customerId));
 	}
 
-	@GetMapping("/exists/{customerId}")
+	@GetMapping("/{customerId}")
 	public ResponseEntity<CustomerResponseDTO> findCustomerById(
 			@PathVariable("customerId") String customerId) {
 		return ResponseEntity.ok(customerService.findById(customerId));
 	}
 
-	@GetMapping("/exists/{customerId}")
+	@DeleteMapping("/{customerId}")
 	public ResponseEntity<Void> deleteById(
 			@PathVariable("customerId") String customerId) {
 		customerService.deleteCustomer(customerId);
