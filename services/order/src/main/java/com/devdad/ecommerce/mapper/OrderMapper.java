@@ -1,6 +1,7 @@
 package com.devdad.ecommerce.mapper;
 
 import com.devdad.ecommerce.dto.OrderRequestDTO;
+import com.devdad.ecommerce.dto.OrderResponseDTO;
 import com.devdad.ecommerce.model.Order;
 
 /**
@@ -8,13 +9,22 @@ import com.devdad.ecommerce.model.Order;
  */
 public class OrderMapper {
 
-	public static Order toEntity(OrderRequestDTO request){
+	public static Order toEntity(OrderRequestDTO request) {
 		return Order.builder()
-			.id(request.id())
-			.customerId(request.customerId())
-			.reference(request.orderReference())
-			.totalAmount(request.amount())
-			.paymentMethod(request.paymentMethod())
-			.build();
+				.id(request.id())
+				.customerId(request.customerId())
+				.reference(request.orderReference())
+				.totalAmount(request.amount())
+				.paymentMethod(request.paymentMethod())
+				.build();
+	}
+
+	public static OrderResponseDTO toOrderResponseDTO(Order order) {
+		return new OrderResponseDTO(
+				order.getId(),
+				order.getReference(),
+				order.getTotalAmount(),
+				order.getPaymentMethod(),
+				order.getCustomerId());
 	}
 }

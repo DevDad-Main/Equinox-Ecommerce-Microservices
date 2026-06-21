@@ -1,9 +1,13 @@
 package com.devdad.ecommerce.service;
 
+import java.util.List;
+
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.devdad.ecommerce.dto.OrderLineRequestDTO;
 import com.devdad.ecommerce.dto.OrderRequestDTO;
+import com.devdad.ecommerce.dto.OrderResponseDTO;
 import com.devdad.ecommerce.dto.PurchaseRequestDTO;
 import com.devdad.ecommerce.exception.BusinessException;
 import com.devdad.ecommerce.feignclient.CustomerClient;
@@ -13,6 +17,7 @@ import com.devdad.ecommerce.kafka.OrderProducer;
 import com.devdad.ecommerce.mapper.OrderMapper;
 import com.devdad.ecommerce.repository.OrderRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -63,5 +68,17 @@ public class OrderService {
 						purchasedProducts));
 
 		return order.getId();
+	}
+
+	public List<OrderResponseDTO> findAllOrders() {
+		return orderRepository.findAll().stream().map(OrderMapper::toOrderResponseDTO).toList();
+	}
+
+	public OrderResponseDTO findById(Integer orderId) {
+		return orderRepository
+				.findById(orderId)
+				.map(OrderMapper::toOrderResponseDTO)
+				.orElseThrow(
+						() -> new EntityNotFoundException(String.format("No order found with the provided ID: %d", orderId)));
 	}
 }
