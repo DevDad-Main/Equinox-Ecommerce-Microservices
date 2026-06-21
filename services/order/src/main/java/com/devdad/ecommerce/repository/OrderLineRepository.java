@@ -13,5 +13,5 @@ import com.devdad.ecommerce.model.OrderLine;
 @Repository
 public interface OrderLineRepository extends JpaRepository<OrderLine, Integer> {
 
-	List<OrderLine> findAllByOrderId( Integer orderId);
+	List<OrderLine> findAllByOrderId(Integer orderId);
 }

@@ -10,5 +10,3 @@ public enum PaymentMethod {
 	MASTER_CARD,
 	STRIPE
 }
-
-
