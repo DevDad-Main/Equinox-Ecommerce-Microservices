@@ -2,15 +2,16 @@ package com.devdad.ecommerce.service;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.devdad.ecommerce.dto.OrderLineRequestDTO;
 import com.devdad.ecommerce.dto.OrderRequestDTO;
 import com.devdad.ecommerce.dto.OrderResponseDTO;
+import com.devdad.ecommerce.dto.PaymentRequestDTO;
 import com.devdad.ecommerce.dto.PurchaseRequestDTO;
 import com.devdad.ecommerce.exception.BusinessException;
 import com.devdad.ecommerce.feignclient.CustomerClient;
+import com.devdad.ecommerce.feignclient.PaymentClient;
 import com.devdad.ecommerce.feignclient.ProductClient;
 import com.devdad.ecommerce.kafka.OrderConfirmationDTO;
 import com.devdad.ecommerce.kafka.OrderProducer;
@@ -33,6 +34,7 @@ public class OrderService {
 
 	private final OrderLineService orderLineService;
 	private final OrderProducer orderProducer;
+	private final PaymentClient paymentClient;
 
 	public Integer createOrder(OrderRequestDTO request) {
 		// Check the customer.
@@ -58,6 +60,16 @@ public class OrderService {
 		}
 
 		// TODO: Initiate payment process
+		var paymentRequest = new PaymentRequestDTO(
+				request.id(),
+				request.amount(),
+				request.paymentMethod(),
+				order.getId(),
+				order.getReference(),
+				customer);
+
+		// NOTE: Initiate Feign microservice communication request
+		paymentClient.requestOrderPayment(paymentRequest);
 
 		orderProducer.sendOrderConfirmation(
 				new OrderConfirmationDTO(
