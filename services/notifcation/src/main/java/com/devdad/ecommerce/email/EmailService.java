@@ -42,11 +42,10 @@ public class EmailService {
 			String orderReference) throws MessagingException {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 
-		MimeMessageHelper messageHelper = 
-			new MimeMessageHelper(
-					mimeMessage, 
-					MULTIPART_MODE_RELATED,
-					UTF_8.name());
+		MimeMessageHelper messageHelper = new MimeMessageHelper(
+				mimeMessage,
+				MULTIPART_MODE_RELATED,
+				UTF_8.name());
 
 		messageHelper.setFrom("contact@equinox.com");
 
@@ -75,21 +74,19 @@ public class EmailService {
 		}
 	}
 
-@Async
+	@Async
 	public void sendOrderConfirmationEmail(
 			String toEmail,
 			String customerName,
 			BigDecimal amount,
 			String orderReference,
-			List<Product> products
-			) throws MessagingException {
+			List<Product> products) throws MessagingException {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 
-		MimeMessageHelper messageHelper = 
-			new MimeMessageHelper(
-					mimeMessage, 
-					MULTIPART_MODE_RELATED,
-					UTF_8.name());
+		MimeMessageHelper messageHelper = new MimeMessageHelper(
+				mimeMessage,
+				MULTIPART_MODE_RELATED,
+				UTF_8.name());
 
 		messageHelper.setFrom("contact@equinox.com");
 

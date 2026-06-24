@@ -11,12 +11,12 @@ spring:
       bootstrap-servers: localhost:9092
       group-id: paymentGroup,orderGroup
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         # spring.json.trusted.packages: '*' # Good for developement, allows everything
         spring.json.trusted.packages: "com.devdad.ecommerce" # Only allows specific packages
-        spring.json.type.mapping: orderConfirmation:com.devdad.ecommerce.kafka.OrderConfirmationDTO,paymentConfirmation:com.devdad.ecommerce.kafka.PaymentNotificationRequestDTO
+        spring.json.type.mapping: orderConfirmation:com.devdad.ecommerce.kafka.OrderConfirmation,paymentConfirmation:com.devdad.ecommerce.kafka.PaymentConfirmation
   mail:
     host: localhost
     port: 1025
